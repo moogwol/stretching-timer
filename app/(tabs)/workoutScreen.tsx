@@ -1,0 +1,298 @@
+import { View, StyleSheet, Dimensions, FlatList, Animated } from 'react-native';
+import { useState, useRef, useEffect, useContext } from 'react';
+import { IconButton, Button, Text } from 'react-native-paper';
+import Countdown from '@/components/Countdown';
+import { Colors as colours } from '@/constants/Colors';
+import { playSingleBell } from '@/libraries/sounds';
+import { DrillContext } from '@/app/_layout';
+import { formattedTime } from '@/libraries/utility';
+import DrillCard from '../../components/DrillCard';
+
+
+export default function workoutScreen() {
+
+    const [currentDrill, setCurrentDrill] = useState(0);
+    const [workoutTime, setWorkoutTime] = useState("0");
+    const [restTime, setRestTime] = useState("0");
+    const [seconds, setSeconds] = useState("0");
+    const [isRunning, setIsRunning] = useState(false);
+    const [isResting, setIsResting] = useState(false);
+
+    // Contexts
+    const drillContext = useContext(DrillContext);
+    if (!drillContext) {
+        throw new Error("DrillContext is not defined");
+    }
+    const { drills, setDrills } = drillContext;
+
+
+    // Constants
+    const windowWidth = Dimensions.get('window').width;
+    const drillCount = drills ? drills.length : 0;
+    const DATA = drills
+
+
+    // refs
+    const listRef = useRef<FlatList>(null); // a ref to the FlatList component
+    const isRunningRef = useRef(isRunning); // a ref to store the isRunning state
+    const initialRender = useRef(true); // a ref to store the initial render state
+
+    // useEffect to update the isRunningRef.current value when the isRunning state changes
+    useEffect(() => {
+        isRunningRef.current = isRunning;
+    }, [isRunning]);
+
+
+    // a function which counts down the seconds to zero
+    const doCountDown = (seconds: string) => {
+
+        // if the isRunning state is false, return
+        if (!isRunningRef.current) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setSeconds(prevSeconds => {
+
+                // if the seconds are zero, clear the interval and return zero
+                if (prevSeconds === "0") {
+                    clearInterval(interval);
+                    return "0";
+                }
+
+                // if the ifRunning state is false, clear the interval
+                if (!isRunningRef.current) {
+                    clearInterval(interval);
+                    return prevSeconds;
+                }
+
+                // if the seconds are greater than zero, decrement the seconds by one
+                return (parseInt(prevSeconds) - 1).toString();
+            });
+
+        }, 1000);
+        return () => clearInterval(interval);
+    };
+
+    const renderSlideDeck = () => {
+        return (
+            <Animated.FlatList style={{ flex: 1 }}
+                data={DATA}
+                ref={listRef}
+                keyExtractor={(item) => item.id.toString()}
+                horizontal
+                getItemLayout={(data, index) => (
+                    { length: windowWidth, offset: windowWidth * index, index }
+                )}
+                renderItem={({ item }) => <View style={{ width: windowWidth }} ><DrillCard style={styles.card}
+                    title={!isResting ? item.name : "Rest"}
+                    nextDrill={isResting ? getNextDrill() : undefined}                
+                /></View>}
+            />)
+    }
+
+
+    // Start the countdown when the isRunning state is true
+    useEffect(() => {
+        isResting ? setSeconds(restTime) : setSeconds(workoutTime);
+        doCountDown(seconds);
+    }, [isRunning]);
+
+
+    const goToNextDrill = () => {
+        listRef.current?.scrollToIndex({ index: currentDrill + 1 });
+        setCurrentDrill(currentDrill + 1);
+        console.log(currentDrill);
+    }
+
+    const goToPreviousDrill = () => {
+        listRef.current?.scrollToIndex({ index: currentDrill - 1 });
+        setCurrentDrill(currentDrill - 1);
+    }
+
+    // Get the name of next drill
+    const getNextDrill = () => {
+        if (currentDrill === drillCount - 1) {
+            return "End of workout";
+        } else {
+            return drills[currentDrill + 1].name;
+        }
+    }
+
+    // Increment and decrement the workout and rest times
+    const incrementWorkSeconds = () => {
+        setIsResting(false);
+        setWorkoutTime((parseInt(workoutTime) + 30).toString());
+    }
+
+    const decrementWorkSeconds = () => {
+        parseInt(workoutTime) >= 30 &&
+            setWorkoutTime((parseInt(workoutTime) - 30).toString());
+    }
+
+    const incrementRestSeconds = () => {
+        setRestTime((parseInt(restTime) + 10).toString());
+    }
+
+    const decrementRestSeconds = () => {
+        parseInt(restTime) >= 10 &&
+            setRestTime((parseInt(restTime) - 10).toString());
+    }
+
+    // Switch between rest and drill countdowns
+    useEffect(() => {
+        // if the seconds are zero and the current drill is less than the drill count and the isResting state is false
+        // set the isResting state to true and set the seconds to 10
+        if (seconds === "0" && currentDrill < drillCount - 1 && !isResting) {
+            setIsResting(true);
+            setSeconds(restTime);
+        }
+        // if the seconds are zero and the current drill is less than the drill count and the isResting state is true
+        if (seconds === "0" && currentDrill < drillCount - 1 && isResting) {
+            setIsResting(false);
+            goToNextDrill();
+            setSeconds(workoutTime);
+        }
+        // if the seconds are zero and the current drill is equal to the drill count and the isResting state is false
+        if (seconds === "0" && currentDrill === drillCount - 1 && !isResting) {
+            // setIsResting(true);
+            setIsRunning(false);
+            setSeconds(restTime);
+        }
+        // if the seconds are zero and the current drill is equal to the drill count and the isResting state is true
+        if (seconds === "0" && currentDrill === drillCount - 1 && isResting) {
+            setIsResting(false);
+            setSeconds(workoutTime);
+        }
+    }, [seconds])
+
+
+
+    // Play a sound when the seconds are zero except on the initial render  
+    useEffect(() => {
+        if (initialRender.current) {
+            initialRender.current = false;
+        } else if (seconds === "0") {
+            playSingleBell();
+            console.log("Sound played");
+        }
+    }, [seconds]);
+
+
+    // User input and button functions
+
+    // Set the time to the round time
+    useEffect(() => {
+        if (!isResting) {
+            setSeconds(workoutTime);
+        }
+    }, [workoutTime])
+
+
+    const handleClickNext = () => {
+        goToNextDrill();
+    }
+
+    const handleClickPrevious = () => {
+        goToPreviousDrill();
+    }
+
+
+    // Start the countdown when the start button is clicked
+    const handleClickStart = () => {
+        setIsRunning(true);
+    }
+
+    const handleClickStop = () => {
+        setIsRunning(false);
+    }
+
+    const handleClickReset = () => {
+        resetCounter();
+    }
+
+    const resetCounter = () => {
+        setSeconds(workoutTime);
+    }
+
+    const nextButtonDisabled = () => {
+        return currentDrill === drillCount - 1;
+    }
+
+    const previousButtonDisabled = () => {
+        return currentDrill === 0;
+    }
+
+
+    return (
+        <View style={styles.container} >
+            <View style={styles.slideContainer}>
+                {renderSlideDeck()}
+            </View>
+            <View style={styles.buttonContainer}>
+                <IconButton disabled={previousButtonDisabled()} size={30} style={styles.button} icon={'arrow-left-bold-outline'} rippleColor={colours.bold} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickPrevious} />
+                <IconButton disabled={nextButtonDisabled()} size={30} mode='contained-tonal' style={styles.button} icon={'arrow-right-bold-outline'} rippleColor={colours.bold} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickNext} />
+            </View>
+            <View style={styles.countdown}>
+                <Countdown minutes='00' seconds={seconds} />
+            </View>
+
+
+            <View style={styles.timeInputContainer}>
+                <View style={styles.timeInput} >
+                    <Text>Round</Text>
+                    <IconButton size={30} icon={'minus-thick'} onPress={decrementWorkSeconds} disabled={parseInt(workoutTime) < 30} />
+                    <Text >{formattedTime(parseInt(workoutTime))}</Text>
+                    <IconButton size={30} icon={'plus-thick'} onPress={incrementWorkSeconds} />
+                </View>
+                <View style={styles.timeInput}>
+                    <Text>Rest</Text>
+                    <IconButton size={30} icon={'minus-thick'} onPress={decrementRestSeconds} disabled={parseInt(restTime) < 10} />
+                    <Text >{formattedTime(parseInt(restTime))}</Text>
+                    <IconButton size={30} icon={'plus-thick'} onPress={incrementRestSeconds} />
+                </View>
+            </View>
+            <View style={styles.buttonContainer} >
+                <Button onPress={handleClickStart} >Start</Button>
+                <Button onPress={handleClickStop} >Stop</Button>
+                <Button onPress={handleClickReset} >Reset</Button>
+            </View>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: colours.background,
+        flex: 1,
+        justifyContent: "flex-start",
+    },
+    slideContainer: {
+        flex: 3,
+    },
+    card: {
+        flex: 2,
+        backgroundColor: colours.primary,
+        borderColor: colours.secondary,
+        borderWidth: 5,
+    },
+    buttonContainer: {
+        // flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-around",
+    },
+    timeInputContainer: {
+        alignItems: "center",
+    },
+    timeInput: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    countdown: {
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    button: {
+
+    }
+});

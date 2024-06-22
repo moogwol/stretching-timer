@@ -1,37 +1,38 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Stack } from "expo-router/stack";
+import { createContext, useState } from "react";
+import { PaperProvider, MD2LightTheme, MD3Colors, MD2DarkTheme, MD3LightTheme } from "react-native-paper";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+export interface Drill {
+  id: number;
+  name: string;
+}
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+import React from 'react';
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+interface DrillContextType {
+  drills: Drill[];
+  setDrills: React.Dispatch<React.SetStateAction<Drill[]>>;
+}
 
-  if (!loaded) {
-    return null;
-  }
+// Initialize the context with undefined. The actual value will be provided by a Provider.
+
+
+export const DrillContext = React.createContext<DrillContextType | undefined>(undefined);
+
+export default function Layout() {
+  const [drills, setDrills] = useState<Drill[]>([]);
+
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <PaperProvider theme={MD3LightTheme}>
+      <DrillContext.Provider value={{ drills, setDrills }}>
+        <Stack>
+          <Stack.Screen name="(tabs)"
+            options={{ headerShown: false }}
+          />
+        </Stack>
+      </DrillContext.Provider>
+    </PaperProvider>
   );
 }

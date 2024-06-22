@@ -4,22 +4,23 @@
     "slug": "bjj-drills-timer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/bjj-patch.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/bjj-patch.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#f8f2da"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/bjj-patch-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.doodlesack.bjjdrillstimer"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,20 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c207b331-95d4-4d0e-9519-cc3abe2287b4"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/c207b331-95d4-4d0e-9519-cc3abe2287b4"
     }
   }
 }
