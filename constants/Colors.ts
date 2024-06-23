@@ -3,29 +3,32 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-export const Colors = {
-  
+const tealTheme = {  
     primary: "#6200EE",
-    secondary: "#03DAC6",
+    secondary: "#018786",
     accent: "#03DAC6",
     background: "aquamarine",
     bold: "gold",
     light: "#FFFFFF",
     surface: "#FFFFFF",
     error: "#B00020",
-    onBackground: "#000000",
-    onSurface: "#000000",
-    onError: "#FFFFFF",
     text: "#000000",
-    neutral50: "#f9f9f9",
-    neutral100: "#f2f2f2",
-    neutral200: "#e5e5e5",
-    neutral300: "#d9d9d9",
-    neutral400: "#cccccc",
-    neutral500: "#bfbfbf",
-    neutral600: "#b3b3b3",
-    neutral700: "#a6a6a6",
-    neutral800: "#999999",
-    neutral900: "#8c8c8c",
+};
 
+// pink theme 
+const pinkTheme = {
+    primary: "#FF0266",
+    secondary: "#FFD166",
+    accent: "#06D6A0",
+    background: "#118AB2",
+    bold: "#073B4C",
+    light: "#FFFFFF",
+    surface: "#FFFFFF",
+    error: "#EF476F",
+    text: "#073B4C",
+};
+
+
+export const useColours = () => {
+  return tealTheme;
 };

@@ -1,17 +1,19 @@
 import { View, StyleSheet } from "react-native";
 import { useContext } from "react";
 import { List } from "react-native-paper";
-import { Colors as colours } from "@/constants/Colors";
+import { useColours } from "@/constants/Colors";
 import { fetchAllDrills, fetchRandomDrills, fetchDrillByTag } from "@/libraries/http";
 import { DrillContext } from "@/app/_layout";
 import { router } from "expo-router";
+
+const colours = useColours();
 
 export interface Drill {
   id: number;
   name: string;
 }
 
-export default function Home() {
+export default function Index() {
 
   const drillContext = useContext(DrillContext);
 
@@ -47,7 +49,7 @@ export default function Home() {
   const handleClickBasicDrills = async () => {
     const data = await fetchDrillByTag('basic');
     setDrills(data as Drill[]);
-    router.push('/workoutScreen');
+    router.navigate('/workoutScreen');
   };
 
 

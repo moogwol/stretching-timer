@@ -1,6 +1,7 @@
 import { Card, Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
-import { Colors as colours } from "@/constants/Colors";
+// import { Colors as colours } from "@/constants/Colors";
+import { useColours } from "@/constants/Colors";
 
 type DrillCardProps = {
     title: string;
@@ -8,6 +9,7 @@ type DrillCardProps = {
     nextDrill?: string;
 };
 
+const colours = useColours();
 
 
 export default function DrillCard(props: DrillCardProps) {

@@ -1,13 +1,16 @@
 import { View, StyleSheet, Dimensions, FlatList, Animated } from 'react-native';
-import { useState, useRef, useEffect, useContext } from 'react';
+import { useState, useRef, useEffect, useContext, useCallback } from 'react';
 import { IconButton, Button, Text } from 'react-native-paper';
 import Countdown from '@/components/Countdown';
-import { Colors as colours } from '@/constants/Colors';
+import { useColours } from '@/constants/Colors';
 import { playSingleBell } from '@/libraries/sounds';
 import { DrillContext } from '@/app/_layout';
 import { formattedTime } from '@/libraries/utility';
 import DrillCard from '../../components/DrillCard';
+import { useLocalSearchParams } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 
+const colours = useColours();
 
 export default function workoutScreen() {
 
@@ -18,6 +21,7 @@ export default function workoutScreen() {
     const [isRunning, setIsRunning] = useState(false);
     const [isResting, setIsResting] = useState(false);
 
+
     // Contexts
     const drillContext = useContext(DrillContext);
     if (!drillContext) {
@@ -26,10 +30,13 @@ export default function workoutScreen() {
     const { drills, setDrills } = drillContext;
 
 
+
     // Constants
     const windowWidth = Dimensions.get('window').width;
     const drillCount = drills ? drills.length : 0;
     const DATA = drills
+    const colours = useColours();
+
 
 
     // refs
@@ -41,6 +48,19 @@ export default function workoutScreen() {
     useEffect(() => {
         isRunningRef.current = isRunning;
     }, [isRunning]);
+
+    // useEffect to reset isResting to false when the screen is focused
+    useFocusEffect(
+        useCallback(() => {
+            // This code runs when the screen is focused
+            setIsResting(false);
+
+            return () => {
+                // This code runs when the screen goes out of focus
+                // Optional: Reset any states if needed when leaving the screen
+            };
+        }, [])
+    );
 
 
     // a function which counts down the seconds to zero
@@ -74,6 +94,7 @@ export default function workoutScreen() {
         return () => clearInterval(interval);
     };
 
+    // a function to render the slide deck of drills
     const renderSlideDeck = () => {
         return (
             <Animated.FlatList style={{ flex: 1 }}
@@ -86,7 +107,7 @@ export default function workoutScreen() {
                 )}
                 renderItem={({ item }) => <View style={{ width: windowWidth }} ><DrillCard style={styles.card}
                     title={!isResting ? item.name : "Rest"}
-                    nextDrill={isResting ? getNextDrill() : undefined}                
+                    nextDrill={isResting ? getNextDrill() : undefined}
                 /></View>}
             />)
     }
@@ -94,7 +115,7 @@ export default function workoutScreen() {
 
     // Start the countdown when the isRunning state is true
     useEffect(() => {
-        isResting ? setSeconds(restTime) : setSeconds(workoutTime);
+        // isResting ? setSeconds(restTime) : setSeconds(workoutTime);
         doCountDown(seconds);
     }, [isRunning]);
 
@@ -198,23 +219,16 @@ export default function workoutScreen() {
     }
 
 
-    // Start the countdown when the start button is clicked
-    const handleClickStart = () => {
-        setIsRunning(true);
-    }
-
-    const handleClickStop = () => {
-        setIsRunning(false);
+    // Start or stop the countdown when the start / stop button is clicked
+    const handleClickStartStop = () => {
+        setIsRunning(!isRunning);
     }
 
     const handleClickReset = () => {
-        resetCounter();
-    }
-
-    const resetCounter = () => {
         setSeconds(workoutTime);
     }
 
+    // Disable the next and previous buttons when the current drill is at the beginning or end of the drill list
     const nextButtonDisabled = () => {
         return currentDrill === drillCount - 1;
     }
@@ -230,8 +244,8 @@ export default function workoutScreen() {
                 {renderSlideDeck()}
             </View>
             <View style={styles.buttonContainer}>
-                <IconButton disabled={previousButtonDisabled()} size={30} style={styles.button} icon={'arrow-left-bold-outline'} rippleColor={colours.bold} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickPrevious} />
-                <IconButton disabled={nextButtonDisabled()} size={30} mode='contained-tonal' style={styles.button} icon={'arrow-right-bold-outline'} rippleColor={colours.bold} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickNext} />
+                <IconButton disabled={previousButtonDisabled()} size={30} style={styles.button} rippleColor={colours.bold} icon={'arrow-left-bold-outline'} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickPrevious} />
+                <IconButton disabled={nextButtonDisabled()} size={30} mode='contained-tonal' style={styles.button} rippleColor={colours.bold} icon={'arrow-right-bold-outline'} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickNext} />
             </View>
             <View style={styles.countdown}>
                 <Countdown minutes='00' seconds={seconds} />
@@ -252,10 +266,13 @@ export default function workoutScreen() {
                     <IconButton size={30} icon={'plus-thick'} onPress={incrementRestSeconds} />
                 </View>
             </View>
-            <View style={styles.buttonContainer} >
-                <Button onPress={handleClickStart} >Start</Button>
-                <Button onPress={handleClickStop} >Stop</Button>
-                <Button onPress={handleClickReset} >Reset</Button>
+            <View style={styles.buttonContainer}>
+                <View style={styles.button}>
+                    <Button buttonColor={colours.secondary} onPress={handleClickStartStop} mode='contained' >{isRunning ? "Stop" : "Start"}</Button>
+                </View>
+                <View style={styles.button}>
+                    <Button buttonColor={colours.secondary} onPress={handleClickReset} mode='contained' >Reset</Button>
+                </View>
             </View>
         </View>
     );
@@ -279,7 +296,12 @@ const styles = StyleSheet.create({
     buttonContainer: {
         // flex: 1,
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "center",
+    },
+    button: {
+        margin: 10,
+        padding: 10,
+        color: colours.secondary,
     },
     timeInputContainer: {
         alignItems: "center",
@@ -292,7 +314,4 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    button: {
-
-    }
 });
