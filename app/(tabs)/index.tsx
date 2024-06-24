@@ -56,6 +56,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
+      <List.Section style={styles.accordion}>
       <List.Accordion title="Choose your drills" titleStyle={styles.accordion} style={styles.accordion} >
         <List.Item style={styles.listItem}
           titleStyle={styles.listItemTitle}
@@ -78,6 +79,7 @@ export default function Index() {
           onPress={handleClickBasicDrills}
         />
       </List.Accordion>
+      </List.Section>
     </View>
   );
 }

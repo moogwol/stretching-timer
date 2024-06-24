@@ -7,7 +7,6 @@ import { playSingleBell } from '@/libraries/sounds';
 import { DrillContext } from '@/app/_layout';
 import { formattedTime } from '@/libraries/utility';
 import DrillCard from '../../components/DrillCard';
-import { useLocalSearchParams } from 'expo-router';
 import { useFocusEffect } from 'expo-router';
 
 const colours = useColours();

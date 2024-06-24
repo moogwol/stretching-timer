@@ -19,7 +19,7 @@ export default function DrillCard(props: DrillCardProps) {
                 <Text style={styles.title} >{props.title}</Text>
             </View>
             <Card.Content style={styles.content} >
-                {props.nextDrill && <Text variant="titleMedium" style={styles.text} >Next: {props.nextDrill}</Text>}
+                {props.nextDrill && <Text variant="titleSmall" style={styles.text} >Next: {props.nextDrill}</Text>}
             </Card.Content>
         </Card>
     )
@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: 300,
         justifyContent: "center",
+        alignContent: "center",
     },
     titleContainer: {
         alignSelf: "center",
@@ -41,13 +42,17 @@ const styles = StyleSheet.create({
         color: colours.bold,
     },
     content: {
-        alignItems: "center",
+        alignItems: "flex-end",
+        justifyContent: "space-between"
     },
     text: {
-        marginTop: 20,
+        marginTop: 30,
+        paddingTop: 20,
+        borderColor: colours.light,
+        // borderWidth: 1,
         color: colours.light,
         fontStyle: "italic",
-        fontSize: 30,
-        
+        fontSize: 30,   
+        alignSelf: "center"
     }
 });
