@@ -192,7 +192,7 @@ export default function workoutScreen() {
     useEffect(() => {
         if (initialRender.current) {
             initialRender.current = false;
-        } else if (seconds === "0") {
+        } else if (seconds === "0" && isRunning) {
             playSingleBell();
             console.log("Sound played");
         }
