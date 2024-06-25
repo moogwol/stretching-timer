@@ -23,12 +23,12 @@ export const fetchAllDrills = async () => {
 }
 
 // Fetch a random selection of 5 drills from the database
-export const fetchRandomDrills = async () => {
+export const fetchRandomDrills = async (num: number) => {
     try {
         const { data, error } = await supabase.from('drills').select("*");
         if (error) throw error;
         const shuffledData = shuffleArray(data);
-        return shuffledData.slice(0, 5);
+        return shuffledData.slice(0, num);
     } catch (error) {
         console.error("Error fetching drills: ", error);
     }
@@ -36,13 +36,13 @@ export const fetchRandomDrills = async () => {
 
 
 
-// Fetch all drills having the tag "judo" from the database
-export const fetchDrillByTag = async (tag:string) => {
+// Fetch all drills having the specified tag from the database
+export const fetchDrillByTag = async (tag:string, num: number) => {
     try {
         const { data, error } = await supabase.from('drills').select("*").contains('tags', [tag]);
         if (error) throw error;
         const shuffledData = shuffleArray(data);
-        return shuffledData.slice(0, 5);
+        return shuffledData.slice(0, num);
     } catch (error) {
         console.error("Error fetching drills: ", error);
     }
