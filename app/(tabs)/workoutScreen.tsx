@@ -243,8 +243,8 @@ export default function workoutScreen() {
                 {renderSlideDeck()}
             </View>
             <View style={styles.buttonContainer}>
-                <IconButton disabled={previousButtonDisabled()} size={30} style={styles.button} rippleColor={colours.bold} icon={'arrow-left-bold-outline'} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickPrevious} />
-                <IconButton disabled={nextButtonDisabled()} size={30} mode='contained-tonal' style={styles.button} rippleColor={colours.bold} icon={'arrow-right-bold-outline'} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickNext} />
+                <IconButton disabled={previousButtonDisabled()} size={30} style={styles.button} rippleColor={colours.light} icon={'arrow-left-bold-outline'} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickPrevious} />
+                <IconButton disabled={nextButtonDisabled()} size={30} mode='contained-tonal' style={styles.button} rippleColor={colours.light} icon={'arrow-right-bold-outline'} iconColor={colours.light} containerColor={colours.accent} onPress={handleClickNext} />
             </View>
             <View style={styles.countdown}>
                 <Countdown minutes='00' seconds={seconds} />
@@ -279,7 +279,7 @@ export default function workoutScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colours.background,
+        backgroundColor: colours.secondary,
         flex: 1,
         justifyContent: "flex-start",
     },

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 60,
         textAlign: "center",
-        color: colours.bold,
+        color: colours.light,
     },
     content: {
         alignItems: "flex-end",
@@ -48,9 +48,8 @@ const styles = StyleSheet.create({
     text: {
         marginTop: 30,
         paddingTop: 20,
-        borderColor: colours.light,
         // borderWidth: 1,
-        color: colours.light,
+        color: colours.secondary,
         fontStyle: "italic",
         fontSize: 30,   
         alignSelf: "center"
