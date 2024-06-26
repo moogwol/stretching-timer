@@ -99,7 +99,7 @@ export default function workoutScreen() {
             <Animated.FlatList style={{ flex: 1 }}
                 data={DATA}
                 ref={listRef}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(_, index) => index.toString()}
                 horizontal
                 getItemLayout={(data, index) => (
                     { length: windowWidth, offset: windowWidth * index, index }

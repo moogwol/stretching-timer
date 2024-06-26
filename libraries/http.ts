@@ -1,5 +1,10 @@
 import { supabase, Drill } from "@/constants/Supabase";
 
+// function to duplicate each element of an array
+function duplicateArrayElements(array: Drill[]) {
+    return array.flatMap((item) => [item, item]);
+}
+
 
 // Function to shuffle an array
 function shuffleArray(array: Drill[]) {
@@ -28,7 +33,8 @@ export const fetchRandomDrills = async (num: number) => {
         const { data, error } = await supabase.from('drills').select("*");
         if (error) throw error;
         const shuffledData = shuffleArray(data);
-        return shuffledData.slice(0, num);
+        const arraySlice = shuffledData.slice(0, num);
+        return duplicateArrayElements(arraySlice);
     } catch (error) {
         console.error("Error fetching drills: ", error);
     }
@@ -42,7 +48,8 @@ export const fetchDrillByTag = async (tag:string, num: number) => {
         const { data, error } = await supabase.from('drills').select("*").contains('tags', [tag]);
         if (error) throw error;
         const shuffledData = shuffleArray(data);
-        return shuffledData.slice(0, num);
+        const arraySlice = shuffledData.slice(0, num);
+        return duplicateArrayElements(arraySlice);
     } catch (error) {
         console.error("Error fetching drills: ", error);
     }
