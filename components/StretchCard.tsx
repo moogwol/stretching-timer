@@ -3,23 +3,23 @@ import { StyleSheet, View } from "react-native";
 // import { Colors as colours } from "@/constants/Colors";
 import { useColours } from "@/constants/Colors";
 
-type DrillCardProps = {
+type StretchCardProps = {
     title: string;
     style: any;
-    nextDrill?: string;
+    nextStretch?: string;
 };
 
 const colours = useColours();
 
 
-export default function DrillCard(props: DrillCardProps) {
+export default function StretchCard(props: StretchCardProps) {
     return (
         <Card style={[styles.card, props.style]}>
             <View style={styles.titleContainer}>
                 <Text style={styles.title} >{props.title}</Text>
             </View>
             <Card.Content style={styles.content} >
-                {props.nextDrill && <Text variant="titleSmall" style={styles.text} >Next: {props.nextDrill}</Text>}
+                {props.nextStretch && <Text variant="titleSmall" style={styles.text} >Next: {props.nextStretch}</Text>}
             </Card.Content>
         </Card>
     )

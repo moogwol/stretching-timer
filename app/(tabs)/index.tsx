@@ -1,94 +1,56 @@
 import { View, StyleSheet } from "react-native";
 import { useContext, useState } from "react";
-import { List, Text, IconButton } from "react-native-paper";
+import { List, Text, IconButton, Button } from "react-native-paper";
 import { useColours } from "@/constants/Colors";
-import { fetchAllDrills, fetchRandomDrills, fetchDrillByTag } from "@/libraries/http";
-import { DrillContext } from "@/app/_layout";
+import { fetchAllStretches, fetchRandomStretches, fetchStretchByTag } from "@/libraries/http";
+import { StretchContext } from "@/app/_layout";
 import { router } from "expo-router";
 import { NumberPicker } from "@/components/NumberPicker";
 
 const colours = useColours();
 
-export interface Drill {
+export interface Stretch {
   id: number;
   name: string;
 }
 
 export default function Index() {
 
-  const [numDrills, setNumDrills] = useState(1);
-  const drillContext = useContext(DrillContext);
+  const [numStretches, setNumStretches] = useState(1);
+  const stretchContext = useContext(StretchContext);
 
   // Check if the context is defined
-  if (!drillContext) {
-    throw new Error("DrillContext is not defined");
+  if (!stretchContext) {
+    throw new Error("StretchContext is not defined");
   }
 
-  const { drills, setDrills } = drillContext;
+  const { stretches, setStretches } = stretchContext;
 
-  // Handler for the button to fetch all drills
-  const handleClickAllDrills = async () => {
-    const data = await fetchAllDrills();
-    setDrills(data as Drill[]);
+
+
+  const handleClickDecrementStretches = async () => {
+    numStretches > 1 && setNumStretches(numStretches - 1);
+  };
+
+  const handleClickIncrementStretches = async () => {
+    setNumStretches(numStretches + 1);
+  };
+
+  const handleClickGo = async () => {
+    const data = await fetchRandomStretches(numStretches);
+    setStretches(data as Stretch[]);
     router.push('/workoutScreen');
-  };
-
-  // Handler for the button to fetch random drills
-  const handleClickRandomDrills = async () => {
-    const data = await fetchRandomDrills(numDrills);
-    setDrills(data as Drill[]);
-    router.push('/workoutScreen');
-
-  };
-
-  const handleClickJudoDrills = async () => {
-    const data = await fetchDrillByTag('judo', numDrills);
-    setDrills(data as Drill[]);
-    router.push('/workoutScreen');
-
-  };
-
-  const handleClickBasicDrills = async () => {
-    const data = await fetchDrillByTag('basic', numDrills);
-    setDrills(data as Drill[]);
-    router.navigate('/workoutScreen');
-  };
-
-  const handleClickDecrementDrills = async () => {
-    numDrills > 1 && setNumDrills(numDrills - 1);
-  };
-
-  const handleClickIncrementDrills = async () => {
-    setNumDrills(numDrills + 1);
   };
 
   return (
     <View style={styles.container}>
-      <NumberPicker title="Number of drills"
-      decrement={handleClickDecrementDrills}
-      increment={handleClickIncrementDrills}
-      num={numDrills}
+      <NumberPicker title="Number of Stretches"
+      decrement={handleClickDecrementStretches}
+      increment={handleClickIncrementStretches}
+      num={numStretches}
       />
-      <List.Section style={styles.accordionSection}>
-        <List.Accordion title="Choose your drills" titleStyle={styles.accordion} style={styles.accordion} >
+      <Button onPress={handleClickGo} >Go</Button>
 
-          <List.Item style={styles.listItem}
-            titleStyle={styles.listItemTitle}
-            title="Random"
-            onPress={handleClickRandomDrills}
-          />
-          <List.Item style={styles.listItem}
-            titleStyle={styles.listItemTitle}
-            title="Judo"
-            onPress={handleClickJudoDrills}
-          />
-          <List.Item style={styles.listItem}
-            titleStyle={styles.listItemTitle}
-            title={["Basic", "Drills"]}
-            onPress={handleClickBasicDrills}
-          />
-        </List.Accordion>
-      </List.Section>
     </View>
   );
 }

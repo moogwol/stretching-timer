@@ -4,16 +4,16 @@ import { IconButton, Button, Text } from 'react-native-paper';
 import Countdown from '@/components/Countdown';
 import { useColours } from '@/constants/Colors';
 import { playSingleBell } from '@/libraries/sounds';
-import { DrillContext } from '@/app/_layout';
 import { formattedTime } from '@/libraries/utility';
-import DrillCard from '../../components/DrillCard';
+import StretchCard from '@/components/StretchCard';
 import { useFocusEffect } from 'expo-router';
+import { StretchContext } from '../_layout';
 
 const colours = useColours();
 
 export default function workoutScreen() {
 
-    const [currentDrill, setCurrentDrill] = useState(0);
+    const [currentStretch, setCurrentStretch] = useState(0);
     const [workoutTime, setWorkoutTime] = useState("0");
     const [restTime, setRestTime] = useState("0");
     const [seconds, setSeconds] = useState("0");
@@ -22,18 +22,18 @@ export default function workoutScreen() {
 
 
     // Contexts
-    const drillContext = useContext(DrillContext);
-    if (!drillContext) {
-        throw new Error("DrillContext is not defined");
+    const stretchContext = useContext(StretchContext);
+    if (!stretchContext) {
+        throw new Error("StretchContext is not defined");
     }
-    const { drills, setDrills } = drillContext;
+    const { stretches, setStretches } = stretchContext;
 
 
 
     // Constants
     const windowWidth = Dimensions.get('window').width;
-    const drillCount = drills ? drills.length : 0;
-    const DATA = drills
+    const stretchCount = stretches ? stretches.length : 0;
+    const DATA = stretches
     const colours = useColours();
 
 
@@ -93,7 +93,7 @@ export default function workoutScreen() {
         return () => clearInterval(interval);
     };
 
-    // a function to render the slide deck of drills
+    // a function to render the slide deck of stretches
     const renderSlideDeck = () => {
         return (
             <Animated.FlatList style={{ flex: 1 }}
@@ -104,9 +104,9 @@ export default function workoutScreen() {
                 getItemLayout={(data, index) => (
                     { length: windowWidth, offset: windowWidth * index, index }
                 )}
-                renderItem={({ item }) => <View style={{ width: windowWidth }} ><DrillCard style={styles.card}
+                renderItem={({ item }) => <View style={{ width: windowWidth }} ><StretchCard style={styles.card}
                     title={!isResting ? item.name : "Rest"}
-                    nextDrill={isResting ? getNextDrill() : undefined}
+                    nextStretch={isResting ? getNextStretch() : undefined}
                 /></View>}
             />)
     }
@@ -119,23 +119,23 @@ export default function workoutScreen() {
     }, [isRunning]);
 
 
-    const goToNextDrill = () => {
-        listRef.current?.scrollToIndex({ index: currentDrill + 1 });
-        setCurrentDrill(currentDrill + 1);
-        console.log(currentDrill);
+    const goToNextStretch = () => {
+        listRef.current?.scrollToIndex({ index: currentStretch + 1 });
+        setCurrentStretch(currentStretch + 1);
+        console.log(currentStretch);
     }
 
-    const goToPreviousDrill = () => {
-        listRef.current?.scrollToIndex({ index: currentDrill - 1 });
-        setCurrentDrill(currentDrill - 1);
+    const goToPreviousStretch = () => {
+        listRef.current?.scrollToIndex({ index: currentStretch - 1 });
+        setCurrentStretch(currentStretch - 1);
     }
 
-    // Get the name of next drill
-    const getNextDrill = () => {
-        if (currentDrill === drillCount - 1) {
+    // Get the name of next stretch
+    const getNextStretch = () => {
+        if (currentStretch === stretchCount - 1) {
             return "End of workout";
         } else {
-            return drills[currentDrill + 1].name;
+            return stretches[currentStretch + 1].name;
         }
     }
 
@@ -159,28 +159,28 @@ export default function workoutScreen() {
             setRestTime((parseInt(restTime) - 10).toString());
     }
 
-    // Switch between rest and drill countdowns
+    // Switch between rest and stretch countdowns
     useEffect(() => {
-        // if the seconds are zero and the current drill is less than the drill count and the isResting state is false
+        // if the seconds are zero and the current stretch is less than the stretch count and the isResting state is false
         // set the isResting state to true and set the seconds to 10
-        if (seconds === "0" && currentDrill < drillCount - 1 && !isResting) {
+        if (seconds === "0" && currentStretch < stretchCount - 1 && !isResting) {
             setIsResting(true);
             setSeconds(restTime);
         }
-        // if the seconds are zero and the current drill is less than the drill count and the isResting state is true
-        if (seconds === "0" && currentDrill < drillCount - 1 && isResting) {
+        // if the seconds are zero and the current stretch is less than the stretch count and the isResting state is true
+        if (seconds === "0" && currentStretch < stretchCount - 1 && isResting) {
             setIsResting(false);
-            goToNextDrill();
+            goToNextStretch();
             setSeconds(workoutTime);
         }
-        // if the seconds are zero and the current drill is equal to the drill count and the isResting state is false
-        if (seconds === "0" && currentDrill === drillCount - 1 && !isResting) {
+        // if the seconds are zero and the current stretch is equal to the stretch count and the isResting state is false
+        if (seconds === "0" && currentStretch === stretchCount - 1 && !isResting) {
             // setIsResting(true);
             setIsRunning(false);
             setSeconds(restTime);
         }
-        // if the seconds are zero and the current drill is equal to the drill count and the isResting state is true
-        if (seconds === "0" && currentDrill === drillCount - 1 && isResting) {
+        // if the seconds are zero and the current stretch is equal to the stretch count and the isResting state is true
+        if (seconds === "0" && currentStretch === stretchCount - 1 && isResting) {
             setIsResting(false);
             setSeconds(workoutTime);
         }
@@ -210,11 +210,11 @@ export default function workoutScreen() {
 
 
     const handleClickNext = () => {
-        goToNextDrill();
+        goToNextStretch();
     }
 
     const handleClickPrevious = () => {
-        goToPreviousDrill();
+        goToPreviousStretch();
     }
 
 
@@ -227,13 +227,13 @@ export default function workoutScreen() {
         setSeconds(workoutTime);
     }
 
-    // Disable the next and previous buttons when the current drill is at the beginning or end of the drill list
+    // Disable the next and previous buttons when the current stretch is at the beginning or end of the stretch list
     const nextButtonDisabled = () => {
-        return currentDrill === drillCount - 1;
+        return currentStretch === stretchCount - 1;
     }
 
     const previousButtonDisabled = () => {
-        return currentDrill === 0;
+        return currentStretch === 0;
     }
 
 
