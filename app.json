@@ -1,31 +1,31 @@
 {
   "expo": {
-    "name": "bjj-drills-timer",
-    "slug": "bjj-drills-timer",
+    "name": "stretching-timer",
+    "slug": "stretching-timer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/bjj-patch.png",
+    "icon": "./assets/images/celtic-stretch.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/bjj-patch.png",
+      "image": "./assets/images/celtic-stretch.png",
       "resizeMode": "contain",
-      "backgroundColor": "#f8f2da"
+      "backgroundColor": "#090D18"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/bjj-patch-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/celtic-stretch.png",
+        "backgroundColor": "#090D18"
       },
-      "package": "com.doodlesack.bjjdrillstimer"
+      "package": "com.doodlesack.stretchingtimer"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/celtic-stretch.png"
     },
     "plugins": [
       "expo-router"
@@ -38,7 +38,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "c207b331-95d4-4d0e-9519-cc3abe2287b4"
+        "projectId": "ab64589a-6aef-4a59-acee-4abd9a5eeec7"
       }
     },
     "runtimeVersion": {
@@ -46,6 +46,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/c207b331-95d4-4d0e-9519-cc3abe2287b4"
-    }
+    },
+    "owner": "doodlesack"
   }
 }

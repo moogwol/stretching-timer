@@ -8,4 +8,5 @@ export const supabase = createClient(SUPABASE_URL, PUBLIC_ANON_KEY);
 export interface Stretch {
     id: number;
     name: string;
+    double_sided: boolean;
   }
