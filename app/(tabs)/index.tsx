@@ -49,7 +49,7 @@ export default function Index() {
       increment={handleClickIncrementStretches}
       num={numStretches}
       />
-      <Button onPress={handleClickGo} >Go</Button>
+      <Button mode="contained" buttonColor={colours.primary} onPress={handleClickGo} >Go</Button>
 
     </View>
   );
