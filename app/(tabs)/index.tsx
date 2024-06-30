@@ -1,8 +1,8 @@
 import { View, StyleSheet } from "react-native";
 import { useContext, useState } from "react";
-import { List, Text, IconButton, Button } from "react-native-paper";
+import { Button } from "react-native-paper";
 import { useColours } from "@/constants/Colors";
-import { fetchAllStretches, fetchRandomStretches, fetchStretchByTag } from "@/libraries/http";
+import { createWorkout } from "@/libraries/http";
 import { StretchContext } from "@/app/_layout";
 import { router } from "expo-router";
 import { NumberPicker } from "@/components/NumberPicker";
@@ -27,7 +27,6 @@ export default function Index() {
   const { stretches, setStretches } = stretchContext;
 
 
-
   const handleClickDecrementStretches = async () => {
     numStretches > 1 && setNumStretches(numStretches - 1);
   };
@@ -36,8 +35,9 @@ export default function Index() {
     setNumStretches(numStretches + 1);
   };
 
+
   const handleClickGo = async () => {
-    const data = await fetchRandomStretches(numStretches);
+    const data = await createWorkout(2, numStretches);
     setStretches(data as Stretch[]);
     router.push('/workoutScreen');
   };
@@ -45,9 +45,9 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <NumberPicker title="Number of Stretches"
-      decrement={handleClickDecrementStretches}
-      increment={handleClickIncrementStretches}
-      num={numStretches}
+        decrement={handleClickDecrementStretches}
+        increment={handleClickIncrementStretches}
+        num={numStretches}
       />
       <Button mode="contained" buttonColor={colours.primary} onPress={handleClickGo} >Go</Button>
 

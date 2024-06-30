@@ -37,11 +37,10 @@ function shuffleArray(array: Stretch[]) {
 
 
 // Fetch all stretches from the database
-export const fetchAllStretches = async () => {
+const fetchAllStretches = async () => {
     try {
         const { data, error } = await supabase.from('stretches').select("*");
         if (error) throw error;
-        console.log("Data: ", data);
         return data;
     } catch (error) {
         console.error("Error fetching stretches: ", error);
@@ -49,21 +48,21 @@ export const fetchAllStretches = async () => {
 }
 
 // Fetch a random selection of 5 stretches from the database
-export const fetchRandomStretches = async (num: number) => {
+const fetchRandomStretches = async (num: number) => {
     try {
         const { data, error } = await supabase.from('stretches').select("*");
         if (error) throw error;
         const shuffledData = shuffleArray(data);
         const arraySlice = shuffledData.slice(0, num);
-        console.log("Data: ", arraySlice);
         return duplicateArrayElements(arraySlice);
     } catch (error) {
         console.error("Error fetching stretches: ", error);
+        return []
     }
 }
 
 // Fetch all stretches having the specified tag from the database
-export const fetchStretchByTag = async (tag: string, num: number) => {
+const fetchStretchByTag = async (tag: string, num: number) => {
     try {
         const { data, error } = await supabase.from('stretches').select("*").contains('tags', [tag]);
         if (error) throw error;
@@ -76,7 +75,7 @@ export const fetchStretchByTag = async (tag: string, num: number) => {
 }
 
 // Fetch random warmup stretches from the database
-export const fetchWarmupStretches = async (num: number) => {
+const fetchWarmupStretches = async (num: number) => {
     try {
         const { data, error } = await supabase.from('warmups').select("*");
         if (error) throw error;
@@ -85,6 +84,18 @@ export const fetchWarmupStretches = async (num: number) => {
         return duplicateArrayElements(arraySlice);
     } catch (error) {
         console.error("Error fetching stretches: ", error);
+        return []
+    }
+}
+
+// Create an array with warmup stretches and main stretches
+export const createWorkout = async (numWarmup: number, numMain: number) => {
+    try {
+        const warmupStretches = await fetchWarmupStretches(numWarmup);
+        const mainStretches = await fetchRandomStretches(numMain);
+        return warmupStretches.concat(mainStretches);
+    } catch (error) {
+        console.error("Error creating workout: ", error);
     }
 }
 
