@@ -17,13 +17,14 @@ function addRightTag(stretch: Stretch) {
     });
 }
 
+
+
 // function to duplicate an element of an array if it is double_sided
 function duplicateArrayElements(array: Stretch[]) {
     return array.flatMap((item) =>
         item.double_sided === true ? [addLeftTag(item), addRightTag(item)] : [item]
     );
 }
-
 
 // Function to shuffle an array
 function shuffleArray(array: Stretch[]) {
@@ -61,12 +62,23 @@ export const fetchRandomStretches = async (num: number) => {
     }
 }
 
-
-
 // Fetch all stretches having the specified tag from the database
 export const fetchStretchByTag = async (tag: string, num: number) => {
     try {
         const { data, error } = await supabase.from('stretches').select("*").contains('tags', [tag]);
+        if (error) throw error;
+        const shuffledData = shuffleArray(data);
+        const arraySlice = shuffledData.slice(0, num);
+        return duplicateArrayElements(arraySlice);
+    } catch (error) {
+        console.error("Error fetching stretches: ", error);
+    }
+}
+
+// Fetch random warmup stretches from the database
+export const fetchWarmupStretches = async (num: number) => {
+    try {
+        const { data, error } = await supabase.from('warmups').select("*");
         if (error) throw error;
         const shuffledData = shuffleArray(data);
         const arraySlice = shuffledData.slice(0, num);
