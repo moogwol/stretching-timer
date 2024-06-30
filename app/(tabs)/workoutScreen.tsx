@@ -8,6 +8,7 @@ import { formattedTime } from '@/libraries/utility';
 import StretchCard from '@/components/StretchCard';
 import { useFocusEffect } from 'expo-router';
 import { StretchContext } from '../_layout';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 const colours = useColours();
 
@@ -46,6 +47,28 @@ export default function workoutScreen() {
     // useEffect to update the isRunningRef.current value when the isRunning state changes
     useEffect(() => {
         isRunningRef.current = isRunning;
+    }, [isRunning]);
+
+    // useEffect to activate the keep awake feature when the timer is running
+    useEffect(() => {
+        const handleKeepAwake = async () => {
+            if (isRunning) {
+                try {
+                    await activateKeepAwakeAsync();
+                    console.log("Keep awake activated");
+                } catch (error) {
+                    console.error("Error activating keep awake: ", error);
+                }
+            } else {
+                try {
+                    await deactivateKeepAwake();
+                    console.log("Keep awake deactivated");
+                } catch (error) {
+                    console.error("Error deactivating keep awake: ", error);
+            }
+        }
+    };
+        handleKeepAwake();
     }, [isRunning]);
 
     // useEffect to reset isResting to false when the screen is focused
